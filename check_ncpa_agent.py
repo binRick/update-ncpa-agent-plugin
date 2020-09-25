@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 
 import re, subprocess, os, sys, json, argparse, hashlib, time
 import http.client
@@ -30,7 +30,11 @@ response = conn.getresponse()
 print(URI, response.status, response.reason)
 data = response.read().decode()
 PLUGIN_DEST_PATH = '{}/{}'.format(NCPA_PLUGINS_DIR, args.plugin_name)
-msg = f'Read {len(data)} bytes for {args.plugin_name} and writing to {PLUGIN_DEST_PATH}'
+msg = 'Read {len(data)} bytes for {args.plugin_name} and writing to {PLUGIN_DEST_PATH}'.format(
+    data=data,
+    args=args,
+    PLUGIN_DEST_PATH=PLUGIN_DEST_PATH,
+)
 #sys.stderr.write(msg+"\n")
 if response.status == 200:
     with open(PLUGIN_DEST_PATH, 'w') as f:
@@ -43,7 +47,7 @@ else:
     sys.exit(2)
 
 #print(dir(response))
-print(f'read {len(data)} bytes')
+print('read {len(data)} bytes'.format(data=data))
 
 
 
