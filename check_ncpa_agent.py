@@ -19,6 +19,7 @@ parser.add_argument('--critical','-c', type=int, help='Critical',)
 args = parser.parse_args()
 ####print(dict(args))
 
+"""
 def get_ncpa_cfg():
     return '{}/{}'.format(
         NCPA_ETC_DIR,
@@ -28,6 +29,7 @@ def get_ncpa_cfg():
 def read_ncpa_cfg():
     return with open(get_ncpa_cfg(),'r') as f:
         return f.read().decode()
+"""
 
 
 dat = {'args':args,'env':list(os.environ.keys())}
