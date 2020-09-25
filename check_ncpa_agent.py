@@ -15,8 +15,7 @@ parser.add_argument('--plugin_name','-n','--plugin-name', type=str, help='Plugin
 parser.add_argument('--warning','-w', type=int, help='Warning',)
 parser.add_argument('--critical','-c', type=int, help='Critical',)
 args = parser.parse_args()
-print(args)
-print(args.plugin_name)
+print(dict(args))
 
 dat = {'args':args,'env':list(os.environ.keys())}
 with open('/tmp/.check_ncpa_agent.log','a') as f:
