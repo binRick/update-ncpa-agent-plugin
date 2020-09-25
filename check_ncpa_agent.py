@@ -3,6 +3,8 @@
 import re, subprocess, os, sys, json, argparse, hashlib, time
 import http.client
 NCPA_PLUGINS_DIR = '/usr/local/ncpa/plugins'
+NCPA_ETC_DIR = '/usr/local/ncpa/etc'
+NCPA_ETC_FILE_NAME = 'ncpa.cfg'
 CHECK_NCPA_AGENT_FILENAME = 'check_ncpa_agent.py'
 ALGORITHMS_AVAILABLE = hashlib.algorithms_available if hasattr(hashlib, "algorithms_available") else hashlib.algorithms
 
@@ -16,6 +18,17 @@ parser.add_argument('--warning','-w', type=int, help='Warning',)
 parser.add_argument('--critical','-c', type=int, help='Critical',)
 args = parser.parse_args()
 ####print(dict(args))
+
+def get_ncpa_cfg():
+    return '{}/{}'.format(
+        NCPA_ETC_DIR,
+        NCPA_ETC_FILE_NAME,
+    )
+
+def read_ncpa_cfg():
+    return with open(get_ncpa_cfg(),'r') as f:
+        return f.read().decode()
+
 
 dat = {'args':args,'env':list(os.environ.keys())}
 with open('/tmp/.check_ncpa_agent.log','a') as f:
