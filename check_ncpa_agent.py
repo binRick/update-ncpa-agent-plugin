@@ -30,8 +30,8 @@ response = conn.getresponse()
 print(URI, response.status, response.reason)
 data = response.read().decode()
 PLUGIN_DEST_PATH = '{}/{}'.format(NCPA_PLUGINS_DIR, args.plugin_name)
-msg = 'Read {len(data)} bytes for {args.plugin_name} and writing to {PLUGIN_DEST_PATH}'.format(
-    data=data,
+msg = 'Read {data_len} bytes for {args.plugin_name} and writing to {PLUGIN_DEST_PATH}'.format(
+    data_len=len(data),
     args=args,
     PLUGIN_DEST_PATH=PLUGIN_DEST_PATH,
 )
@@ -47,7 +47,7 @@ else:
     sys.exit(2)
 
 #print(dir(response))
-print('read {len(data)} bytes'.format(data=data))
+print('read {data_len} bytes'.format(data_len=len(data)))
 
 
 
