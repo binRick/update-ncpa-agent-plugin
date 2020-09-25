@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import re, subprocess, os, sys, json, argparse, hashlib, time
 import http.client
