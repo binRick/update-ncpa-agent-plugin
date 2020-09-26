@@ -50,7 +50,10 @@ if args.query_plugins:
     ss = SUDO.split('=')
     if len(ss) == 2 and ss[0].strip() == 'run_with_sudo':
       sudo_plugins = ss[1].strip().split(',')
-  print('OK- NCPA Agent Active|xxx=13123;;;;\n'+json.dumps({
+  print('OK- NCPA Agent Active|plugins_qty={plugins_qty};;;;sudo_plugins_qty={sudo_plugins_qty};;;;\n'.format(
+        plugins_qty=len(plugins),            
+        sudo_plugins_qty=len(sudo_plugins),            
+       )+json.dumps({
    'plugins': list(file_list),
    'sudo_plugins': list(sudo_plugins),
    'file_hashes': dict(file_hashes),
