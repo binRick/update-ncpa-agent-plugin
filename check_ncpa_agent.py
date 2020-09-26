@@ -39,9 +39,9 @@ def get_run_with_sudos():
   return S
 
 if args.query_plugins:
-  file_list = [os.path.basename(f) for f in glob.glob('{}/{}'.format(NCPA_PLUGINS_DIR,'*'))]
+  plugins = [os.path.basename(f) for f in glob.glob('{}/{}'.format(NCPA_PLUGINS_DIR,'*'))]
   file_hashes = {}
-  for f in file_list:
+  for f in plugins:
     file_hashes[f] = hashlib.md5(pathlib.Path('{}/{}'.format(NCPA_PLUGINS_DIR,f)).read_bytes()).hexdigest()
   sudo_plugins = []
   sudos = get_run_with_sudos()
@@ -54,7 +54,7 @@ if args.query_plugins:
         plugins_qty=len(plugins),            
         sudo_plugins_qty=len(sudo_plugins),            
        )+json.dumps({
-   'plugins': list(file_list),
+   'plugins': list(plugins),
    'sudo_plugins': list(sudo_plugins),
    'file_hashes': dict(file_hashes),
   }))
