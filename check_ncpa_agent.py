@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser()
 
 # Specify arguments to the plugin
 parser.add_argument('--query_plugins','-q','--query-plugins', dest='query_plugins', default=False, action='store_true', help='Query Agent Plugins',)
+parser.add_argument('--query_plugins_mode','-M','--query-plugins-mode', dest='query_plugins_mode', default=False, required=False, help='Query Agent Plugins Mode',)
 parser.add_argument('--monitor_host','-m','--monitor-host', type=str, help='Monitor Host',)
 parser.add_argument('--monitor_port','-P','--monitor-port', type=int, help='Monitor Port',)
 parser.add_argument('--monitor_prefix','-F','--monitor-prefix', type=str, help='Path Prefix',)
@@ -50,14 +51,24 @@ if args.query_plugins:
     ss = SUDO.split('=')
     if len(ss) == 2 and ss[0].strip() == 'run_with_sudo':
       sudo_plugins = ss[1].strip().split(',')
-  print('OK- NCPA Agent Active|plugins_qty={plugins_qty};;;;sudo_plugins_qty={sudo_plugins_qty};;;;\n'.format(
+
+  if args.query_plugins_mode == 'plugins':
+    print('OK- {plugins_qty} Plugins|plugins_qty={plugins_qty};;;;\n'.format(
+      plugins_qty=len(plugins),
+    )+"\n".join(plugins))
+  elif args.query_plugins_mode == 'sudo_plugins':
+    print('OK- {sudo_plugins_qty} Sudo Plugins|sudo_plugins_qty={sudo_plugins_qty};;;;\n'.format(
+      sudo_plugins_qty=len(sudo_plugins),
+    )+"\n".join(sudo_plugins))
+  else:
+    print('OK- NCPA Agent Active|plugins_qty={plugins_qty};;;;sudo_plugins_qty={sudo_plugins_qty};;;;\n'.format(
         plugins_qty=len(plugins),            
         sudo_plugins_qty=len(sudo_plugins),            
        )+json.dumps({
-   'plugins': list(plugins),
-   'sudo_plugins': list(sudo_plugins),
-   'file_hashes': dict(file_hashes),
-  }))
+     'plugins': list(plugins),
+     'sudo_plugins': list(sudo_plugins),
+     'file_hashes': dict(file_hashes),
+    }))
   sys.exit(0)
 
 
