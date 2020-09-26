@@ -13,7 +13,7 @@ parser = argparse.ArgumentParser()
 # Specify arguments to the plugin
 parser.add_argument('--monitor_host','-m','--monitor-host', type=str, help='Monitor Host',)
 parser.add_argument('--monitor_port','-P','--monitor-port', type=int, help='Monitor Port',)
-parser.add_argument('--prefix','-p', type=str, help='Path Prefix',)
+parser.add_argument('--monitor_prefix','-F','--monitor-prefix', type=str, help='Path Prefix',)
 parser.add_argument('--plugin_name','-n','--plugin-name', type=str, help='Plugin Name',)
 parser.add_argument('--warning','-w', type=int, help='Warning',)
 parser.add_argument('--critical','-c', type=int, help='Critical',)
@@ -39,7 +39,7 @@ with open('/tmp/.check_ncpa_agent.log','a') as f:
 BODY = "***filecontents***"
 conn = http.client.HTTPConnection( args.monitor_host, args.monitor_port)
 URI = '/{}{}'.format(
-  args.prefix,
+  args.monitor_prefix,
   args.plugin_name,
 )
 conn.request("GET", URI, BODY)
