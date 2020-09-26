@@ -21,15 +21,47 @@ parser.add_argument('--critical','-c', type=int, help='Critical',)
 args = parser.parse_args()
 ####print(dict(args))
 
+def get_ncpa_cfg():
+    return '{}/{}'.format(
+        NCPA_ETC_DIR,
+        NCPA_ETC_FILE_NAME,
+    )
+
+def read_ncpa_cfg():
+  with open(get_ncpa_cfg(),'r') as f:
+    return f.read()
+
+def get_run_with_sudos():
+  S = []
+  for l in str(read_ncpa_cfg()).splitlines():
+    if l.lstrip().startswith('run_with_sudo '):
+      S.append(l)
+  return S
+
 if args.query_plugins:
   file_list = [os.path.basename(f) for f in glob.glob('{}/{}'.format(NCPA_PLUGINS_DIR,'*'))]
   file_hashes = {}
+  sudo_plugin_hashes = {}
   for f in file_list:
     file_hashes[f] = hashlib.md5(pathlib.Path('{}/{}'.format(NCPA_PLUGINS_DIR,f)).read_bytes()).hexdigest()
+  sudo_plugins = []
+  sudos = get_run_with_sudos()
+  if len(sudos) > 0:
+    SUDO = sudos.pop()
+    ss = SUDO.split('=')
+    if len(ss) == 2 and ss[0].strip() == 'run_with_sudo':
+      sudo_plugins = ss[1].strip().split(',')
+  for f in sudo_plugins:
+    sudo_plugin_hashes[f] = hashlib.md5(pathlib.Path('{}/{}'.format(NCPA_PLUGINS_DIR,f)).read_bytes()).hexdigest()
   print(json.dumps({
    'plugins': list(file_list),
+   'sudo_plugins': list(sudo_plugins),
    'algs': list(ALGORITHMS_AVAILABLE),
    'file_hashes': dict(file_hashes),
+   'sudo_plugin_hashes': dict(sudo_plugin_hashes),
+   'cfg_file': str(get_ncpa_cfg()),
+   'cfg': str(read_ncpa_cfg()),
+   'sudo_lines_qty': len(get_run_with_sudos()),
   }))
   sys.exit(0)
 
@@ -72,15 +104,6 @@ print('read {data_len} bytes'.format(data_len=len(data)))
 
 
 """
-def get_ncpa_cfg():
-    return '{}/{}'.format(
-        NCPA_ETC_DIR,
-        NCPA_ETC_FILE_NAME,
-    )
-
-def read_ncpa_cfg():
-    return with open(get_ncpa_cfg(),'r') as f:
-        return f.read().decode()
 """
 
 
