@@ -41,7 +41,6 @@ def get_run_with_sudos():
 if args.query_plugins:
   file_list = [os.path.basename(f) for f in glob.glob('{}/{}'.format(NCPA_PLUGINS_DIR,'*'))]
   file_hashes = {}
-  sudo_plugin_hashes = {}
   for f in file_list:
     file_hashes[f] = hashlib.md5(pathlib.Path('{}/{}'.format(NCPA_PLUGINS_DIR,f)).read_bytes()).hexdigest()
   sudo_plugins = []
@@ -51,17 +50,10 @@ if args.query_plugins:
     ss = SUDO.split('=')
     if len(ss) == 2 and ss[0].strip() == 'run_with_sudo':
       sudo_plugins = ss[1].strip().split(',')
-  for f in sudo_plugins:
-    sudo_plugin_hashes[f] = hashlib.md5(pathlib.Path('{}/{}'.format(NCPA_PLUGINS_DIR,f)).read_bytes()).hexdigest()
-  print(json.dumps({
+  print('OK- NCPA Agent Active|xxx=13123;;;;\n'+json.dumps({
    'plugins': list(file_list),
    'sudo_plugins': list(sudo_plugins),
-   'algs': list(ALGORITHMS_AVAILABLE),
    'file_hashes': dict(file_hashes),
-   'sudo_plugin_hashes': dict(sudo_plugin_hashes),
-   'cfg_file': str(get_ncpa_cfg()),
-   'cfg': str(read_ncpa_cfg()),
-   'sudo_lines_qty': len(get_run_with_sudos()),
   }))
   sys.exit(0)
 
