@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import re, subprocess, os, sys, json, argparse, hashlib, time
+import re, subprocess, os, sys, json, argparse, hashlib, time, glob, pathlib
 import http.client
 NCPA_PLUGINS_DIR = '/usr/local/ncpa/plugins'
 NCPA_ETC_DIR = '/usr/local/ncpa/etc'
@@ -11,6 +11,7 @@ ALGORITHMS_AVAILABLE = hashlib.algorithms_available if hasattr(hashlib, "algorit
 parser = argparse.ArgumentParser()
 
 # Specify arguments to the plugin
+parser.add_argument('--query_plugins','-q','--query-plugins', dest='query_plugins', default=False, action='store_true', help='Query Agent Plugins',)
 parser.add_argument('--monitor_host','-m','--monitor-host', type=str, help='Monitor Host',)
 parser.add_argument('--monitor_port','-P','--monitor-port', type=int, help='Monitor Port',)
 parser.add_argument('--monitor_prefix','-F','--monitor-prefix', type=str, help='Path Prefix',)
@@ -20,17 +21,17 @@ parser.add_argument('--critical','-c', type=int, help='Critical',)
 args = parser.parse_args()
 ####print(dict(args))
 
-"""
-def get_ncpa_cfg():
-    return '{}/{}'.format(
-        NCPA_ETC_DIR,
-        NCPA_ETC_FILE_NAME,
-    )
-
-def read_ncpa_cfg():
-    return with open(get_ncpa_cfg(),'r') as f:
-        return f.read().decode()
-"""
+if args.query_plugins:
+  file_list = [os.path.basename(f) for f in glob.glob('{}/{}'.format(NCPA_PLUGINS_DIR,'*'))]
+  file_hashes = {}
+  for f in file_list:
+    file_hashes[f] = hashlib.md5(pathlib.Path('{}/{}'.format(NCPA_PLUGINS_DIR,f)).read_bytes()).hexdigest()
+  print(json.dumps({
+   'plugins': list(file_list),
+   'algs': list(ALGORITHMS_AVAILABLE),
+   'file_hashes': dict(file_hashes),
+  }))
+  sys.exit(0)
 
 
 dat = {'args':args,'env':list(os.environ.keys())}
@@ -68,5 +69,18 @@ print('read {data_len} bytes'.format(data_len=len(data)))
 
 
 
+
+
+"""
+def get_ncpa_cfg():
+    return '{}/{}'.format(
+        NCPA_ETC_DIR,
+        NCPA_ETC_FILE_NAME,
+    )
+
+def read_ncpa_cfg():
+    return with open(get_ncpa_cfg(),'r') as f:
+        return f.read().decode()
+"""
 
 
