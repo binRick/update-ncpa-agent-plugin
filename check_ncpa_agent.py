@@ -84,6 +84,13 @@ URI = '/{}{}'.format(
 conn.request("GET", URI, BODY)
 response = conn.getresponse()
 data = response.read()
+
+ef =  '{}/{}'.format(NCPA_PLUGINS_DIR, args.plugin_name)
+if os.path.exists(ef):
+  h = hashlib.md5(pathlib.Path('{}/{}'.format(NCPA_PLUGINS_DIR,f)).read_bytes()).hexdigest()
+  print('OK- plugin exists already with hash {} :: {}'.format(h, args.plugin_name))
+  sys.exit(0)
+
 PLUGIN_DEST_PATH = '{}/{}'.format(NCPA_PLUGINS_DIR, args.plugin_name)
 msg = 'OK- Read {data_len} bytes for {args.plugin_name} and wrote to {PLUGIN_DEST_PATH}'.format(
     data_len=len(data),
