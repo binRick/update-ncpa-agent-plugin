@@ -83,10 +83,10 @@ URI = '/{}{}'.format(
 )
 conn.request("GET", URI, BODY)
 response = conn.getresponse()
-print(URI, response.status, response.reason)
+#print(URI, response.status, response.reason)
 data = response.read().decode()
 PLUGIN_DEST_PATH = '{}/{}'.format(NCPA_PLUGINS_DIR, args.plugin_name)
-msg = 'Read {data_len} bytes for {args.plugin_name} and writing to {PLUGIN_DEST_PATH}'.format(
+msg = 'OK- Read {data_len} bytes for {args.plugin_name} and wrote to {PLUGIN_DEST_PATH}'.format(
     data_len=len(data),
     args=args,
     PLUGIN_DEST_PATH=PLUGIN_DEST_PATH,
@@ -101,15 +101,4 @@ if response.status == 200:
 else:
     print('Failed to update plugin {} => HTTP Code {}'.format(args.plugin_name,response.status))
     sys.exit(2)
-
-#print(dir(response))
-print('read {data_len} bytes'.format(data_len=len(data)))
-
-
-
-
-
-"""
-"""
-
 
