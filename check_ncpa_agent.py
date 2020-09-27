@@ -84,7 +84,7 @@ URI = '/{}{}'.format(
 conn.request("GET", URI, BODY)
 response = conn.getresponse()
 #print(URI, response.status, response.reason)
-data = response.read().decode()
+data = response.read()
 PLUGIN_DEST_PATH = '{}/{}'.format(NCPA_PLUGINS_DIR, args.plugin_name)
 msg = 'OK- Read {data_len} bytes for {args.plugin_name} and wrote to {PLUGIN_DEST_PATH}'.format(
     data_len=len(data),
