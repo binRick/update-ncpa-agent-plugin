@@ -87,8 +87,11 @@ data = response.read()
 
 ef =  '{}/{}'.format(NCPA_PLUGINS_DIR, args.plugin_name)
 if os.path.exists(ef):
-  h = hashlib.md5(ef).read_bytes().encode().hexdigest()
-  print('OK- plugin exists already with hash {} :: {}'.format(h, args.plugin_name))
+  with open(ef,'rb') as f:
+    dat = f.read()
+  h = hashlib.md5(dat).read_bytes().encode().hexdigest()
+  dat_len = len(dat)
+  print('OK- plugin exists already with hash {} :: {}, {} bytes'.format(h, args.plugin_name, dat_len))
   sys.exit(0)
 
 PLUGIN_DEST_PATH = '{}/{}'.format(NCPA_PLUGINS_DIR, args.plugin_name)
