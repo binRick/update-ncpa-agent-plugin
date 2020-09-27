@@ -96,9 +96,9 @@ if response.status == 200:
     with open(PLUGIN_DEST_PATH, 'w') as f:
       f.write(data)
     os.chmod(PLUGIN_DEST_PATH, 0o755)
-    print('Read {} bytes for {} => {}'.format(len(data),args.plugin_name,PLUGIN_DEST_PATH))
+    print('OK- Read {} bytes for {} => {}'.format(len(data),args.plugin_name,PLUGIN_DEST_PATH))
     sys.exit(0)
 else:
-    print('Failed to update plugin {} => HTTP Code {}'.format(args.plugin_name,response.status))
+    print('CRITICAL- Failed to update plugin {} => HTTP Code {}'.format(args.plugin_name,response.status))
     sys.exit(2)
 
