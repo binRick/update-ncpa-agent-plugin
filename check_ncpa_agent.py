@@ -83,7 +83,6 @@ URI = '/{}{}'.format(
 )
 conn.request("GET", URI, BODY)
 response = conn.getresponse()
-#print(URI, response.status, response.reason)
 data = response.read()
 PLUGIN_DEST_PATH = '{}/{}'.format(NCPA_PLUGINS_DIR, args.plugin_name)
 msg = 'OK- Read {data_len} bytes for {args.plugin_name} and wrote to {PLUGIN_DEST_PATH}'.format(
@@ -93,7 +92,7 @@ msg = 'OK- Read {data_len} bytes for {args.plugin_name} and wrote to {PLUGIN_DES
 )
 #sys.stderr.write(msg+"\n")
 if response.status == 200:
-    with open(PLUGIN_DEST_PATH, 'w') as f:
+    with open(PLUGIN_DEST_PATH, 'wb') as f:
       f.write(data)
     os.chmod(PLUGIN_DEST_PATH, 0o755)
     print('OK- Read {} bytes for {} => {}'.format(len(data),args.plugin_name,PLUGIN_DEST_PATH))
