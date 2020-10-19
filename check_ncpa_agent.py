@@ -91,8 +91,8 @@ if os.path.exists(ef):
     dat = f.read()
   h = hashlib.md5(dat).hexdigest()
   dat_len = len(dat)
-  print('OK- plugin exists already with hash {} :: {}, {} bytes'.format(h, args.plugin_name, dat_len))
-  sys.exit(0)
+  #print('OK- plugin exists already with hash {} :: {}, {} bytes'.format(h, args.plugin_name, dat_len))
+  #sys.exit(0)
 
 PLUGIN_DEST_PATH = '{}/{}'.format(NCPA_PLUGINS_DIR, args.plugin_name)
 msg = 'OK- Read {data_len} bytes for {args.plugin_name} and wrote to {PLUGIN_DEST_PATH}'.format(
