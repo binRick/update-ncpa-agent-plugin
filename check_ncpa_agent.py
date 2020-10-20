@@ -6,7 +6,10 @@ NCPA_PLUGINS_DIR = '/usr/local/ncpa/plugins'
 NCPA_ETC_DIR = '/usr/local/ncpa/etc'
 NCPA_ETC_FILE_NAME = 'ncpa.cfg'
 CHECK_NCPA_AGENT_FILENAME = 'check_ncpa_agent.py'
+INDEX_FILE_NAME = 'index.json'
 ALGORITHMS_AVAILABLE = hashlib.algorithms_available if hasattr(hashlib, "algorithms_available") else hashlib.algorithms
+DEBUG_MODE = False
+
 
 parser = argparse.ArgumentParser()
 
@@ -21,6 +24,16 @@ parser.add_argument('--warning','-w', type=int, help='Warning',)
 parser.add_argument('--critical','-c', type=int, help='Critical',)
 args = parser.parse_args()
 ####print(dict(args))
+
+def get_index_dict():
+    conn = http.client.HTTPConnection( args.monitor_host, args.monitor_port)
+    URI = '/{}{}'.format(
+      args.monitor_prefix,
+      'index.json',
+    )
+    conn.request("GET", URI, '')
+    index_dict = json.loads(conn.getresponse().read().decode())
+    return index_dict
 
 def get_ncpa_cfg():
     return '{}/{}'.format(
@@ -39,11 +52,19 @@ def get_run_with_sudos():
       S.append(l)
   return S
 
+index_dict = get_index_dict()
+if index_dict and type(index_dict) == dict and args.plugin_name in list(index_dict.keys()):
+  remote_hash = str(index_dict[args.plugin_name])
+  plugin_hash = hashlib.sha256(pathlib.Path('{}/{}'.format(NCPA_PLUGINS_DIR,args.plugin_name)).read_bytes()).hexdigest()
+  if (remote_hash == plugin_hash):
+    print(f'OK- {args.plugin_name} hash {remote_hash} is up to date with remote.')
+    sys.exit(0)
+
 if args.query_plugins:
   plugins = [os.path.basename(f) for f in glob.glob('{}/{}'.format(NCPA_PLUGINS_DIR,'*'))]
   file_hashes = {}
   for f in plugins:
-    file_hashes[f] = hashlib.md5(pathlib.Path('{}/{}'.format(NCPA_PLUGINS_DIR,f)).read_bytes()).hexdigest()
+    file_hashes[f] = hashlib.sha256(pathlib.Path('{}/{}'.format(NCPA_PLUGINS_DIR,f)).read_bytes()).hexdigest()
   sudo_plugins = []
   sudos = get_run_with_sudos()
   if len(sudos) > 0:
@@ -73,8 +94,10 @@ if args.query_plugins:
 
 
 dat = {'args':args,'env':list(os.environ.keys())}
-with open('/tmp/.check_ncpa_agent.log','a') as f:
-  f.write(str(dat))
+if DEBUG_MODE:
+  with open('/tmp/.check_ncpa_agent.log','a') as f:
+    f.write(str(dat))
+
 BODY = "***filecontents***"
 conn = http.client.HTTPConnection( args.monitor_host, args.monitor_port)
 URI = '/{}{}'.format(
@@ -89,10 +112,10 @@ ef =  '{}/{}'.format(NCPA_PLUGINS_DIR, args.plugin_name)
 if os.path.exists(ef):
   with open(ef,'rb') as f:
     dat = f.read()
-  h = hashlib.md5(dat).hexdigest()
+  h = hashlib.sha256(dat).hexdigest()
   dat_len = len(dat)
-  #print('OK- plugin exists already with hash {} :: {}, {} bytes'.format(h, args.plugin_name, dat_len))
-  #sys.exit(0)
+  print('OK- plugin exists already with hash {} :: {}, {} bytes'.format(h, args.plugin_name, dat_len))
+  sys.exit(0)
 
 PLUGIN_DEST_PATH = '{}/{}'.format(NCPA_PLUGINS_DIR, args.plugin_name)
 msg = 'OK- Read {data_len} bytes for {args.plugin_name} and wrote to {PLUGIN_DEST_PATH}'.format(
